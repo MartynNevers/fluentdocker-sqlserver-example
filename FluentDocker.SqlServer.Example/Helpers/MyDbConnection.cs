@@ -19,11 +19,7 @@
 
         public MyDbConnection(SqlConnection sqlConnection)
         {
-            if (sqlConnection == null)
-            {
-                ArgumentNullException.ThrowIfNull(sqlConnection);
-            }
-
+            ArgumentNullException.ThrowIfNull(sqlConnection);
             this.dbConnection = sqlConnection;
         }
 
@@ -115,11 +111,11 @@
             return sqlCommand.ExecuteReader();
         }
 
-        public bool ExecuteScript(string scriptPath)
+        public bool ExecuteSqlFile(string sqlFilePath)
         {
             try
             {
-                string script = File.ReadAllText(scriptPath);
+                string script = File.ReadAllText(sqlFilePath);
 
                 // Split script on GO command
                 IEnumerable<string> commands = Regex.Split(
@@ -138,7 +134,7 @@
                         catch (SqlException ex)
                         {
                             string formattedCommand = command.Length > 100 ? command.Substring(0, 100) + " ...\n..." : command;
-                            Debug.WriteLine($"SQL file error.\nFile: {scriptPath} \nLine: {ex.LineNumber} \nError: {ex.Message} \nSQL Command: \n{formattedCommand}");
+                            Debug.WriteLine($"SQL file error.\nFile: {sqlFilePath} \nLine: {ex.LineNumber} \nError: {ex.Message} \nSQL Command: \n{formattedCommand}");
                             return false;
                         }
                     }

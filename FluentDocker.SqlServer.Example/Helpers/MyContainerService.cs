@@ -12,11 +12,7 @@
 
         public MyContainerService(IContainerService containerService)
         {
-            if (containerService == null)
-            {
-                ArgumentNullException.ThrowIfNull(containerService);
-            }
-
+            ArgumentNullException.ThrowIfNull(containerService);
             this.containerService = containerService;
         }
 

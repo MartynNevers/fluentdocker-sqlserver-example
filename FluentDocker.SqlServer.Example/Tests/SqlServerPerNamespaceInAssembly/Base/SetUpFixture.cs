@@ -37,7 +37,7 @@
             MyContainerService.KillZombieContainers(Prefix);
 
             // Start containerized SQL database
-            var containerBuilder = this.GetSqlContainerBuilder();
+            var containerBuilder = GetSqlContainerBuilder();
             sqlContainerService = containerBuilder.Build().Start();
         }
 
@@ -48,7 +48,7 @@
             sqlContainerService.Dispose();
         }
 
-        private MyContainerBuilder GetSqlContainerBuilder()
+        private static MyContainerBuilder GetSqlContainerBuilder()
         {
             var id = Guid.NewGuid();
             var builder = new Builder()

@@ -2,7 +2,7 @@
 {
     using System.Data;
     using System.Diagnostics;
-    using System.Text.RegularExpressions;
+    using FluentDocker.SqlServer.Example.Helpers;
     using Microsoft.Data.SqlClient;
 
     /// <summary>
@@ -11,17 +11,17 @@
     [TestFixture]
     internal class MySchoolDbTests : BaseTest
     {
-        private const string ScriptRelativePath = @"Resources/MySchool.sql";
+        private const string SqlFile = "MySchool.sql";
 
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {
             base.OneTimeSetUp();
-            var scriptPath = GetScriptPath();
-            var scriptSuccess = this.SqlConnection.ExecuteScript(scriptPath);
+            var sqlFilePath = Path.Combine(Resources.Path, SqlFile);
+            var scriptSuccess = this.SqlConnection.ExecuteSqlFile(sqlFilePath);
             if (!scriptSuccess)
             {
-                Assert.Fail($"SQL file error.\nFile: {scriptPath}");
+                Assert.Fail($"SQL file error.\nFile: {sqlFilePath}");
             }
         }
 
@@ -79,16 +79,6 @@
             int rows = this.SqlConnection.ExecuteNonQuery(command, CommandType.Text, parameterCredits);
             var result = string.Format("{0} row{1} {2} updated.", rows, rows > 1 ? "s" : null, rows > 1 ? "are" : "is");
             Assert.That(result, Is.EqualTo(expectedResult));
-        }
-
-        private static string GetScriptPath()
-        {
-            var windowsPattern = @"(\\bin\\(Debug|Release)(\\[a-zA-Z0-9.]*)$)";
-            var linuxPattern = @"(/bin/(Debug|Release)(/[a-zA-Z0-9.]*)$)";
-            var pathRegex = new Regex($"{windowsPattern}|{linuxPattern}", RegexOptions.Compiled);
-            var projectPath = pathRegex.Replace(Directory.GetCurrentDirectory(), string.Empty);
-            string scriptAbsolutePath = Path.Combine(projectPath, ScriptRelativePath);
-            return scriptAbsolutePath;
         }
     }
 }
